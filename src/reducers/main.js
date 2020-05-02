@@ -9,6 +9,9 @@ const initialState = {
     //   _id: 'qweqweqweq',
     //   text: 'message 1',
     //   createdAt: new Date(),
+    //   received: false,
+    //   sent: false,
+    //   pending: false,
     //   user: {
     //     _id: 'vrsVmSkschXWxGMT1uuNXq',
     //     name: 'Juan Navas',
@@ -20,18 +23,30 @@ const initialState = {
 
 const PUSH_MESSAGES = (state, action) => {
   const newMessages = action.payload;
-  // console.log('newMessages', newMessages);
-  let {messages, messagesQueue, user} = state;
+  let {messages, messagesQueue, user, isConnected} = state;
 
   for (let message of newMessages) {
-    // console.log('mess', message);
     message.user = user;
-    createMessage(message);
+    // message.received = true;
+    // message.sent = true;
+    message.readed = true;
+    // If it is connected then save to DB a send to server
+    if (isConnected) {
+      console.log('connected');
+      message.sent = true;
+      message.received = false;
+      message.pending = false;
+      createMessage(message);
+    } else {
+      message.sent = false;
+      message.received = false;
+      message.pending = true;
+      // else save to DB and push to messages queue on DB
+      createMessage(message);
+      console.log('not connected');
+    }
   }
-  console.log('messageCreated...');
-  // console.log('messages: ', messages);
-  // console.log('user: ', user);
-  return {...state, user, messages, messagesQueue};
+  return {...state};
 };
 
 export default (state = initialState, {type, ...action}) => {

@@ -1,30 +1,41 @@
-import React, {useEffect, useCallback} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {realm, updateMessageById} from '../db/index';
 
 const CheckQueue = _ => {
-  const dispatch = useDispatch();
+  const [queue, setQueue] = useState(0);
 
-  const {messagesQueue, isConnected} = useSelector(state => state.main);
+  const {isConnected} = useSelector(state => state.main);
 
-  const setQueue = useCallback(
-    data => dispatch({type: 'SET_MESSAGES_QUEUE', payload: data}),
-    [dispatch],
-  );
+  function listener(messages, changes) {
+    setQueue(messages);
+  }
+
+  useEffect(_ => {
+    let messagesPending = realm.objects('Message').filtered('pending = true');
+
+    messagesPending.addListener(listener);
+
+    return _ => {
+      messagesPending.removeListener(listener);
+    };
+  }, []);
+
+  const sendQueue = async _ => {
+    queue.forEach(e => {
+      updateMessageById(e._id, {
+        sent: true,
+        pending: false,
+      });
+    });
+  };
 
   useEffect(
     _ => {
-      console.log('new change on queue');
-      console.log(messagesQueue);
-    },
-    [messagesQueue],
-  );
-
-  useEffect(
-    _ => {
-      if (isConnected && messagesQueue.length > 0) {
+      if (isConnected === true && queue.length > 0) {
         console.log('send queue');
-        console.log(messagesQueue);
-        setQueue([]);
+
+        sendQueue();
       }
     },
     [isConnected],

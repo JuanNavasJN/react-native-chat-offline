@@ -1,6 +1,6 @@
 import React, {useEffect, useCallback} from 'react';
 import ChatScreen from './screens/ChatScreen';
-import {getUser, deleteAllMessages} from './db/index';
+import {getUser, createUser} from './db/index';
 import {useDispatch} from 'react-redux';
 import userParse from './utils/userParse';
 const Index = () => {

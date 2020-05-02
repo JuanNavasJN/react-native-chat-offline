@@ -3,7 +3,7 @@ import {Platform, KeyboardAvoidingView, SafeAreaView} from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {useSelector, useDispatch} from 'react-redux';
 import userParse from '../utils/userParse';
-import {createMessage, getUser} from '../db/index';
+// import {createMessage, getUser} from '../db/index';
 
 const Chat = _ => {
   const dispatch = useDispatch();
@@ -15,25 +15,7 @@ const Chat = _ => {
     [dispatch],
   );
 
-  const [chat, setChat] = useState(null);
-
-  useEffect(
-    _ => {
-      if (messages && user) {
-        setChat(
-          <GiftedChat
-            messages={messages}
-            onSend={onSend}
-            user={userParse(user)}
-          />,
-        );
-      }
-    },
-    [user, messages],
-  );
-
   const onSend = messages => {
-    // console.log(messages);
     pushMessages(messages);
   };
 
@@ -44,11 +26,19 @@ const Chat = _ => {
         // behavior="padding"
         keyboardVerticalOffset={30}
         enabled>
-        {chat}
+        <GiftedChat
+          messages={messages}
+          onSend={onSend}
+          user={userParse(user)}
+        />
       </KeyboardAvoidingView>
     );
   }
-  return <SafeAreaView style={{flex: 1}}>{chat}</SafeAreaView>;
+  return (
+    <SafeAreaView style={{flex: 1}}>
+      <GiftedChat messages={messages} onSend={onSend} user={userParse(user)} />
+    </SafeAreaView>
+  );
 };
 
 export default Chat;

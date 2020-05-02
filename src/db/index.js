@@ -19,6 +19,9 @@ const MessageSchema = {
     text: 'string',
     createdAt: 'string',
     user: 'User',
+    received: 'bool',
+    sent: 'bool',
+    pending: 'bool',
   },
 };
 
@@ -64,7 +67,7 @@ const updateUserById = (id, data) =>
         }
         resolve(user);
       } catch (e) {
-        console.log('error to getUser', e);
+        console.log('error to updateUserById', e);
         reject(e);
       }
     });
@@ -94,12 +97,37 @@ const createMessage = message =>
           _id: short.generate(),
           text: message.text,
           createdAt: String(new Date().getTime()),
-          //   createdAt: String(message.createdAt),
+          received: message.received,
+          sent: message.sent,
+          pending: message.pending,
           user: message.user,
         });
         resolve(newMessage);
       } catch (e) {
         console.log('error to createMessage', e);
+        reject(e);
+      }
+    });
+  });
+
+const updateMessageById = (id, data) =>
+  new Promise((resolve, reject) => {
+    realm.write(() => {
+      try {
+        let message = realm
+          .objects('Message')
+          .filtered('_id = "' + id + '"')[0];
+
+        if (typeof data.sent === 'boolean') message.sent = data.sent;
+
+        if (typeof data.pending === 'boolean') message.pending = data.pending;
+
+        if (typeof data.received === 'boolean')
+          message.received = data.received;
+
+        resolve(message);
+      } catch (e) {
+        console.log('error to updateMessageById', e);
         reject(e);
       }
     });
@@ -133,4 +161,5 @@ export {
   getUser,
   deleteUser,
   updateUserById,
+  updateMessageById,
 };

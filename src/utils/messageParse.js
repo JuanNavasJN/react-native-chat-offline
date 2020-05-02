@@ -14,6 +14,9 @@ const messageParse = message => {
     _id: message._id,
     text: message.text,
     createdAt: date,
+    sent: message.sent,
+    pending: message.pending,
+    received: message.received,
     user,
   };
 };

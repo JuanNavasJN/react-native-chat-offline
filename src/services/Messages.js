@@ -36,30 +36,26 @@ const Messages = _ => {
     // });
   }
 
+  // Get all messages from DB
   const fetchMessages = _ => {
     let all = getAllMessages();
 
-    // console.log('all messages', all);
     if (all && all.length > 0) {
-      console.log('there are messages');
       let newMessages = [];
       all.forEach(e => {
-        // console.log('e', e);
         newMessages.push(messageParse(e));
       });
 
-      // console.log('newMessages', newMessages.length);
       setMessages(newMessages.reverse());
     } else {
       setMessages([]);
-      console.log('no hay');
     }
   };
 
   useEffect(_ => {
     fetchMessages();
     //-------------------------------------------
-
+    // Listening Messages changes on DB
     let messagesDB = realm.objects('Message');
     messagesDB.addListener(listener);
 
