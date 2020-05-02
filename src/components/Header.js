@@ -11,7 +11,7 @@ import {
 } from 'native-base';
 
 import {deleteAllMessages} from '../db/index';
-const Index = _ => {
+const Index = ({title}) => {
   const handlePress = _ => {
     deleteAllMessages();
   };
@@ -24,7 +24,7 @@ const Index = _ => {
         </Button>
       </Left>
       <Body>
-        <Title>Header</Title>
+        <Title>{title}</Title>
       </Body>
       <Right>
         <Button danger onPress={handlePress}>

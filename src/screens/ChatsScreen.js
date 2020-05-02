@@ -1,15 +1,13 @@
 import React from 'react';
 import {Container} from 'native-base';
 import Header from '../components/Header';
-import Chat from '../components/Chat';
 
-const ChatScreen = () => {
+const ChatsScreen = () => {
   return (
     <Container>
-      <Header title="Chat" />
-      <Chat />
+      <Header title="Chats" />
     </Container>
   );
 };
 
-export default ChatScreen;
+export default ChatsScreen;

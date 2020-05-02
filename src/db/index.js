@@ -94,7 +94,8 @@ const createMessage = message =>
       try {
         // console.log('createdAt', String(new Date().getTime()));
         let newMessage = realm.create('Message', {
-          _id: short.generate(),
+          // _id: short.generate(),
+          _id: message._id,
           text: message.text,
           createdAt: String(new Date().getTime()),
           received: message.received,

@@ -4,6 +4,7 @@ import {GiftedChat} from 'react-native-gifted-chat';
 import {useSelector, useDispatch} from 'react-redux';
 import userParse from '../utils/userParse';
 // import {createMessage, getUser} from '../db/index';
+const short = require('short-uuid');
 
 const Chat = _ => {
   const dispatch = useDispatch();
@@ -19,6 +20,10 @@ const Chat = _ => {
     pushMessages(messages);
   };
 
+  const handleTyping = _ => {
+    // console.log('typing');
+  };
+
   if (Platform.OS === 'android') {
     return (
       <KeyboardAvoidingView
@@ -30,13 +35,23 @@ const Chat = _ => {
           messages={messages}
           onSend={onSend}
           user={userParse(user)}
+          alwaysShowSend
+          messageIdGenerator={short.generate}
+          onInputTextChanged={handleTyping}
         />
       </KeyboardAvoidingView>
     );
   }
   return (
     <SafeAreaView style={{flex: 1}}>
-      <GiftedChat messages={messages} onSend={onSend} user={userParse(user)} />
+      <GiftedChat
+        messages={messages}
+        onSend={onSend}
+        user={userParse(user)}
+        alwaysShowSend
+        messageIdGenerator={short.generate}
+        onInputTextChanged={handleTyping}
+      />
     </SafeAreaView>
   );
 };

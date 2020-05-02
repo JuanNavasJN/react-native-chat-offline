@@ -3,7 +3,7 @@ import {createMessage} from '../db/index';
 const initialState = {
   isConnected: false,
   messagesQueue: [],
-  user: {},
+  user: undefined,
   messages: [
     // {
     //   _id: 'qweqweqweq',
