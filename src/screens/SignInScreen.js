@@ -12,35 +12,49 @@ import {
   Input,
 } from 'native-base';
 import Header from '../components/Header';
+import {vh, vw} from 'react-native-css-vh-vw';
+import {useSelector} from 'react-redux';
 
 const SignInScreen = ({navigation}) => {
+  const {content, bgCard, text, placeholder, bgBotton} = useSelector(
+    state => state.colors,
+  );
+
   return (
     <Container>
       <Header title="Sign In" navigation={navigation} />
-      <View style={styles.content}>
+      <View style={[styles.content, {backgroundColor: content}]}>
         <Card>
-          <CardItem>
+          <CardItem style={[{backgroundColor: bgCard}]}>
             <Body style={styles.body}>
               <Content>
                 <View style={styles.row}>
                   <Item style={styles.item}>
-                    <Input placeholder="Name" />
+                    <Input
+                      placeholder="Name"
+                      placeholderTextColor={placeholder}
+                      style={{color: text}}
+                    />
                   </Item>
                 </View>
                 <View style={styles.row}>
                   <Item style={styles.item}>
-                    <Input placeholder="Username" />
+                    <Input
+                      placeholderTextColor={placeholder}
+                      placeholder="Username"
+                      style={{color: text}}
+                    />
                   </Item>
                 </View>
 
                 <View style={[styles.row, {marginTop: 20}]}>
                   <Button
-                    style={styles.button}
+                    style={[styles.button, {backgroundColor: bgBotton}]}
                     onPress={_ => navigation.navigate('Chats')}>
                     <Text>Login</Text>
                   </Button>
                   <Button
-                    style={styles.button}
+                    style={[styles.button, {backgroundColor: bgBotton}]}
                     onPress={_ => navigation.navigate('SignUp')}>
                     <Text>Sign Up</Text>
                   </Button>
@@ -55,23 +69,23 @@ const SignInScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  body: {height: 210, width: 500},
+  body: {height: vh(32)},
   content: {
-    backgroundColor: '#fafafa',
     height: '100%',
     paddingTop: '25%',
     paddingHorizontal: '3%',
   },
   row: {
-    width: 300,
+    width: vw(81),
     padding: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   button: {
-    minWidth: 120,
+    minWidth: vw(32),
     textAlign: 'center',
     justifyContent: 'center',
+    backgroundColor: '#3949ab',
   },
   item: {
     width: '100%',

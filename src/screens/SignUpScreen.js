@@ -12,44 +12,65 @@ import {
   Input,
 } from 'native-base';
 import Header from '../components/Header';
+import {vh, vw} from 'react-native-css-vh-vw';
+import {useSelector} from 'react-redux';
 
 const SignUpScreen = ({navigation}) => {
+  const {content, bgCard, text, placeholder, bgBotton} = useSelector(
+    state => state.colors,
+  );
   return (
     <Container>
       <Header title="Sign Up" navigation={navigation} />
-      <View style={styles.content}>
+      <View style={[styles.content, {backgroundColor: content}]}>
         <Card>
-          <CardItem>
+          <CardItem style={[{backgroundColor: bgCard}]}>
             <Body style={styles.body}>
               <Content>
                 <View style={styles.row}>
                   <Item style={styles.item}>
-                    <Input placeholder="Name" />
+                    <Input
+                      placeholder="Name"
+                      placeholderTextColor={placeholder}
+                      style={{color: text}}
+                    />
                   </Item>
                 </View>
                 <View style={styles.row}>
                   <Item style={styles.item}>
-                    <Input placeholder="Username" />
+                    <Input
+                      placeholder="Username"
+                      placeholderTextColor={placeholder}
+                      style={{color: text}}
+                    />
                   </Item>
                 </View>
                 <View style={styles.row}>
                   <Item style={styles.item}>
-                    <Input placeholder="Password" />
+                    <Input
+                      placeholder="Password"
+                      placeholderTextColor={placeholder}
+                      style={{color: text}}
+                    />
                   </Item>
                 </View>
                 <View style={styles.row}>
                   <Item style={styles.item}>
-                    <Input placeholder="Confirm Password" />
+                    <Input
+                      placeholder="Confirm Password"
+                      placeholderTextColor={placeholder}
+                      style={{color: text}}
+                    />
                   </Item>
                 </View>
 
                 <View style={[styles.row, {marginTop: 20}]}>
                   <Button
-                    style={styles.button}
+                    style={[styles.button, {backgroundColor: bgBotton}]}
                     onPress={_ => navigation.navigate('SignIn')}>
                     <Text>Sign In</Text>
                   </Button>
-                  <Button style={styles.button}>
+                  <Button style={[styles.button, {backgroundColor: bgBotton}]}>
                     <Text>Save</Text>
                   </Button>
                 </View>
@@ -63,28 +84,24 @@ const SignUpScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  body: {height: 350, width: 500},
+  body: {height: vh(50)},
   content: {
-    backgroundColor: '#fafafa',
     height: '100%',
     paddingTop: '20%',
     paddingHorizontal: '3%',
   },
   row: {
-    // backgroundColor: '#ccc',
-    width: 300,
+    width: vw(81),
     padding: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // marginVertical: 2,
   },
   button: {
-    minWidth: 120,
+    minWidth: vw(32),
     textAlign: 'center',
     justifyContent: 'center',
   },
   item: {
-    // backgroundColor: '#ccc',
     width: '100%',
   },
 });

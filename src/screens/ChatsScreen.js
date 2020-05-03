@@ -2,11 +2,13 @@ import React, {useState, useEffect} from 'react';
 import {Container, Card, CardItem, Text} from 'native-base';
 import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
+import {useSelector} from 'react-redux';
 
 import Header from '../components/Header';
 
 const ChatsScreen = ({navigation}) => {
   const [chats, setChats] = useState([]);
+  const {content, bgCard, text} = useSelector(state => state.colors);
 
   useEffect(() => {
     let newChats = [];
@@ -22,7 +24,7 @@ const ChatsScreen = ({navigation}) => {
   return (
     <Container>
       <Header title="Chats" navigation={navigation} />
-      <View style={styles.content}>
+      <View style={[styles.content, {backgroundColor: content}]}>
         <FlatList
           showsVerticalScrollIndicator={false}
           data={chats}
@@ -32,11 +34,11 @@ const ChatsScreen = ({navigation}) => {
               activeOpacity={0.4}
               onPress={_ => navigation.navigate('Chat')}>
               <Card>
-                <CardItem>
+                <CardItem style={[{backgroundColor: bgCard}]}>
                   <View style={styles.avatar} />
                   <View>
                     <View style={styles.line}>
-                      <Text>John Doe</Text>
+                      <Text style={[{color: text}]}>John Doe</Text>
                       <View style={styles.status} />
                     </View>
                     <View>
@@ -58,9 +60,7 @@ const ChatsScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  body: {height: 210, width: 500},
   content: {
-    backgroundColor: '#fafafa',
     height: '100%',
     // paddingTop: '25%',
     paddingHorizontal: '3%',
