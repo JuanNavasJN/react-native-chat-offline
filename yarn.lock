@@ -5580,6 +5580,11 @@ react-native-communications@2.2.1:
   resolved "https://registry.yarnpkg.com/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
 
+react-native-css-vh-vw@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-css-vh-vw/-/react-native-css-vh-vw-1.0.4.tgz#ca8c0dcf88fced56f619d60bc717f363c7474a11"
+  integrity sha512-Zbrg+MPi0ueK7XkqJgfmnQniXOOXWclqUBTVFLgy5l8yDc5X3dxAvQnpy5x9fDCjAVNf/CQxgnPiiM1mi7ozUA==
+
 react-native-drawer@2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/react-native-drawer/-/react-native-drawer-2.5.1.tgz#08b9314184f48c724f1b467f8859797369798654"
@@ -5715,11 +5720,6 @@ react-navigation-stack@^2.4.0:
   dependencies:
     color "^3.1.2"
     react-native-iphone-x-helper "^1.2.1"
-
-react-navigation-transitions@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/react-navigation-transitions/-/react-navigation-transitions-1.0.12.tgz#7307668bc7d5fdbdc1954224e7891f7fe6cb5f74"
-  integrity sha512-Hp0wX9KoXwsFch6Fgiz9HpGjQZDhnyucLbCai0LcaOC3VpmgYmvkbeAg/mQ5Z5exuY6PPrh/+FXU00yMPDHkcw==
 
 react-navigation@^4.3.9:
   version "4.3.9"

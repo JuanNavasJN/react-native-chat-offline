@@ -16,7 +16,7 @@ import Header from '../components/Header';
 const SignInScreen = ({navigation}) => {
   return (
     <Container>
-      <Header title="Sign In" />
+      <Header title="Sign In" navigation={navigation} />
       <View style={styles.content}>
         <Card>
           <CardItem>
@@ -34,7 +34,9 @@ const SignInScreen = ({navigation}) => {
                 </View>
 
                 <View style={[styles.row, {marginTop: 20}]}>
-                  <Button style={styles.button}>
+                  <Button
+                    style={styles.button}
+                    onPress={_ => navigation.navigate('Chats')}>
                     <Text>Login</Text>
                   </Button>
                   <Button
@@ -61,12 +63,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: '3%',
   },
   row: {
-    // backgroundColor: '#ccc',
     width: 300,
     padding: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // marginVertical: 2,
   },
   button: {
     minWidth: 120,
@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   item: {
-    // backgroundColor: '#ccc',
     width: '100%',
   },
 });

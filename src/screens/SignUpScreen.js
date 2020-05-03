@@ -16,7 +16,7 @@ import Header from '../components/Header';
 const SignUpScreen = ({navigation}) => {
   return (
     <Container>
-      <Header title="Sign Up" />
+      <Header title="Sign Up" navigation={navigation} />
       <View style={styles.content}>
         <Card>
           <CardItem>

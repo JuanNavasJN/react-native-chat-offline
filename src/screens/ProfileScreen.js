@@ -2,10 +2,10 @@ import React from 'react';
 import {Container} from 'native-base';
 import Header from '../components/Header';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
   return (
     <Container>
-      <Header title="Profile" />
+      <Header title="Profile" navigation={navigation} />
     </Container>
   );
 };

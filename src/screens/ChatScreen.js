@@ -3,10 +3,10 @@ import {Container} from 'native-base';
 import Header from '../components/Header';
 import Chat from '../components/Chat';
 
-const ChatScreen = () => {
+const ChatScreen = ({navigation}) => {
   return (
     <Container>
-      <Header title="Chat" />
+      <Header title="Chat" navigation={navigation} />
       <Chat />
     </Container>
   );

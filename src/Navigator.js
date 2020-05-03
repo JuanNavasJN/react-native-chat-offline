@@ -1,7 +1,6 @@
 import {createAppContainer} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
+import {createStackNavigator, TransitionPresets} from 'react-navigation-stack';
 
-import {fadeIn} from 'react-navigation-transitions';
 import ChatScreen from './screens/ChatScreen';
 import ChatsScreen from './screens/ChatsScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -29,6 +28,9 @@ const RootStack = createStackNavigator(
   {
     initialRouteName: 'SignUp',
     headerMode: 'none',
+    defaultNavigationOptions: {
+      ...TransitionPresets.SlideFromRightIOS,
+    },
   },
 );
 
