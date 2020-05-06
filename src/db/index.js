@@ -1,5 +1,5 @@
 const Realm = require('realm');
-const short = require('short-uuid');
+// const short = require('short-uuid');
 
 const UserSchema = {
   name: 'User',
@@ -8,6 +8,7 @@ const UserSchema = {
     _id: 'string',
     name: 'string',
     username: {type: 'string', indexed: true},
+    accessToken: {type: 'string', optional: true},
   },
 };
 
@@ -29,10 +30,18 @@ const realm = new Realm({schema: [UserSchema, MessageSchema]});
 
 const createUser = user =>
   new Promise((resolve, reject) => {
-    realm.write(() => {
+    realm.write(async () => {
       try {
+        // first delete all users
+
+        let allUsers = realm.objects('User');
+        realm.delete(allUsers);
+
+        // after insert a user
+
         let newUser = realm.create('User', {
-          _id: short.generate(),
+          // _id: short.generate(),
+          _id: user._id,
           name: user.name,
           username: user.username,
         });
@@ -65,6 +74,7 @@ const updateUserById = (id, data) =>
         for (let key in data) {
           user[key] = data[key];
         }
+
         resolve(user);
       } catch (e) {
         console.log('error to updateUserById', e);

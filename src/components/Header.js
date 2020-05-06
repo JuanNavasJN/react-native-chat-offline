@@ -12,11 +12,12 @@ import {
 } from 'native-base';
 import {vh, vw} from 'react-native-css-vh-vw';
 import {useSelector, useDispatch} from 'react-redux';
+import {deleteAllMessages, updateUserById} from '../db/index';
 
-import {deleteAllMessages} from '../db/index';
 const Index = ({title, navigation}) => {
   const [showMenu, setShowMenu] = useState(false);
   const {content, mode, bgBotton, text} = useSelector(state => state.colors);
+  const {user} = useSelector(state => state.main);
 
   const dispatch = useDispatch();
 
@@ -95,6 +96,14 @@ const Index = ({title, navigation}) => {
     setMode(mode);
   };
 
+  const handleLogout = async _ => {
+    await updateUserById(user._id, {
+      accessToken: null,
+    });
+
+    to('SignIn');
+  };
+
   return (
     <View>
       <Header
@@ -135,7 +144,7 @@ const Index = ({title, navigation}) => {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity style={styles.row} onPress={_ => to('SignIn')}>
+          <TouchableOpacity style={styles.row} onPress={handleLogout}>
             <Text style={[styles.text, {color: text}]}>Log Out</Text>
           </TouchableOpacity>
         </View>

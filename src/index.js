@@ -19,16 +19,16 @@ const Index = () => {
     let userDB = await getUser();
 
     if (userDB) {
+      // console.log('user seted-----', userDB);
       setUser(userDB);
       // deleteAllMessages();
     } else {
-      console.log('no hay user');
-      let newUser = await createUser({
-        name: 'Juan Navas',
-        username: 'jn',
-      });
-
-      console.log('userCreated: ', newUser.username, newUser.name);
+      // console.log('no hay user');
+      // let newUser = await createUser({
+      //   name: 'Juan Navas',
+      //   username: 'jn',
+      // });
+      // console.log('userCreated: ', newUser.username, newUser.name);
     }
 
     // console.log('//--- getUser ------//');
