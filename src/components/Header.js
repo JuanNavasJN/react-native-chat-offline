@@ -12,12 +12,12 @@ import {
 } from 'native-base';
 import {vh, vw} from 'react-native-css-vh-vw';
 import {useSelector, useDispatch} from 'react-redux';
-import {deleteAllMessages, updateUserById} from '../db/index';
+import {deleteAllMessages, updateUserById, deleteUser} from '../db/index';
 
 const Index = ({title, navigation}) => {
   const [showMenu, setShowMenu] = useState(false);
   const {content, mode, bgBotton, text} = useSelector(state => state.colors);
-  const {user} = useSelector(state => state.main);
+  const {user, isLogged} = useSelector(state => state.main);
 
   const dispatch = useDispatch();
 
@@ -49,6 +49,25 @@ const Index = ({title, navigation}) => {
   const setBgBotton = useCallback(
     data => dispatch({type: 'SET_BGBOTTON_COLOR', payload: data}),
     [dispatch],
+  );
+
+  const setIsLogged = useCallback(
+    data => dispatch({type: 'SET_IS_LOGGED', payload: data}),
+    [dispatch],
+  );
+
+  const setUser = useCallback(
+    data => dispatch({type: 'SET_USER', payload: data}),
+    [dispatch],
+  );
+
+  useEffect(
+    _ => {
+      if (user !== undefined && typeof user.accessToken === 'string') {
+        setIsLogged(true);
+      }
+    },
+    [user],
   );
 
   useEffect(
@@ -101,6 +120,9 @@ const Index = ({title, navigation}) => {
       accessToken: null,
     });
 
+    setIsLogged(false);
+    deleteUser();
+    setUser(undefined);
     to('SignIn');
   };
 
@@ -127,9 +149,6 @@ const Index = ({title, navigation}) => {
       </Header>
       {showMenu && (
         <View style={[styles.menuContainer, {backgroundColor: content}]}>
-          <TouchableOpacity style={styles.row} onPress={_ => to('Profile')}>
-            <Text style={[styles.text, {color: text}]}>Profile</Text>
-          </TouchableOpacity>
           {mode === 'light' ? (
             <TouchableOpacity
               style={styles.row}
@@ -144,9 +163,19 @@ const Index = ({title, navigation}) => {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity style={styles.row} onPress={handleLogout}>
-            <Text style={[styles.text, {color: text}]}>Log Out</Text>
-          </TouchableOpacity>
+          {isLogged ? (
+            <View>
+              <TouchableOpacity style={styles.row} onPress={_ => to('Chats')}>
+                <Text style={[styles.text, {color: text}]}>Chats</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.row} onPress={_ => to('Profile')}>
+                <Text style={[styles.text, {color: text}]}>Profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.row} onPress={handleLogout}>
+                <Text style={[styles.text, {color: text}]}>Log Out</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
         </View>
       )}
     </View>

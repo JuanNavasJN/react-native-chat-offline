@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   Container,
   Card,
@@ -12,14 +12,120 @@ import {
   Icon,
 } from 'native-base';
 import Header from '../components/Header';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {useMutation} from '@apollo/react-hooks';
+import {USER_UPDATE} from '../graphql/querys';
+import {updateUserById} from '../db/index';
 
 const ProfileScreen = ({navigation}) => {
+  const dispatch = useDispatch();
+
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState(undefined);
+  const [confirmation, setConfirmation] = useState(undefined);
+
+  const [userUpdate] = useMutation(USER_UPDATE);
+
   const {content, bgCard, text, placeholder, bgBotton} = useSelector(
     state => state.colors,
   );
+
+  const setUser = useCallback(
+    data => dispatch({type: 'SET_USER', payload: data}),
+    [dispatch],
+  );
+
+  const {user, isConnected} = useSelector(state => state.main);
+
+  useEffect(
+    _ => {
+      if (typeof user === 'object') {
+        setName(user.name);
+        setUsername(user.username);
+      }
+
+      // if (user === undefined) navigation.navigate('SignIn');
+      // console.log('user -> ', user);
+    },
+    [user],
+  );
+
+  const handleSave = async _ => {
+    let {accessToken} = user;
+
+    if (accessToken === null || accessToken === undefined) {
+      navigation.navigate('SignIn');
+    }
+
+    // --------------------------------- Validations --------------------------------------
+
+    if (isConnected === false) {
+      Alert.alert('', 'Sorry 😕 there is no internet conection.');
+      return;
+    }
+
+    if (/^[a-zA-Z0-9]+$/.test(username) === false) {
+      Alert.alert('', 'Username must be alphanumeric.');
+      return;
+    }
+
+    if (password !== undefined && password !== confirmation) {
+      Alert.alert('', 'Password and confirmation password must be equals.');
+      return;
+    }
+
+    if (password !== undefined && password.length < 6) {
+      Alert.alert('', 'Password must have at least 6 characters.');
+      return;
+    }
+
+    // --------------------------------- End - Validations --------------------------------------
+
+    let data = {
+      _id: user._id,
+      name,
+      username: username.toLowerCase(),
+      password,
+      avatar: 'avatar',
+    };
+
+    // console.log(accessToken, data);
+
+    try {
+      let res = await userUpdate({
+        variables: {accessToken, data},
+      });
+
+      let userUpd = res.data.userUpdate;
+      userUpd.accessToken = accessToken;
+
+      setUser(userUpd);
+      await updateUserById(userUpd._id, {
+        username: userUpd.username,
+        name: userUpd.name,
+      });
+
+      Alert.alert('', 'Updated profile 😀');
+      // console.log('res ', res);
+    } catch (e) {
+      if (/E11000 duplicate key error collection/.test(e)) {
+        Alert.alert('', 'New username not available 😕');
+        return;
+      }
+
+      Alert.alert('', 'Error to update profile 😕');
+
+      console.log('error to update profile ->');
+      console.log(e);
+    } finally {
+      setPassword(undefined);
+      setConfirmation(undefined);
+    }
+  };
+
   return (
     <Container>
       <Header title="Profile" navigation={navigation} />
@@ -44,6 +150,8 @@ const ProfileScreen = ({navigation}) => {
                       placeholder="Name"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
+                      value={name}
+                      onChangeText={e => setName(e)}
                     />
                   </Item>
                 </View>
@@ -53,6 +161,8 @@ const ProfileScreen = ({navigation}) => {
                       placeholder="Username"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
+                      value={username}
+                      onChangeText={e => setUsername(e)}
                     />
                   </Item>
                 </View>
@@ -62,6 +172,9 @@ const ProfileScreen = ({navigation}) => {
                       placeholder="Password"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
+                      secureTextEntry={true}
+                      value={password}
+                      onChangeText={e => setPassword(e)}
                     />
                   </Item>
                 </View>
@@ -71,12 +184,17 @@ const ProfileScreen = ({navigation}) => {
                       placeholder="Confirm Password"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
+                      secureTextEntry={true}
+                      onChangeText={e => setConfirmation(e)}
+                      value={confirmation}
                     />
                   </Item>
                 </View>
 
                 <View style={[styles.row, {marginTop: 20}]}>
-                  <Button style={[styles.button, {backgroundColor: bgBotton}]}>
+                  <Button
+                    style={[styles.button, {backgroundColor: bgBotton}]}
+                    onPress={handleSave}>
                     <Text>Save</Text>
                   </Button>
                 </View>

@@ -4,6 +4,7 @@ const initialState = {
   isConnected: false,
   messagesQueue: [],
   user: undefined,
+  isLogged: false,
   messages: [
     // {
     //   _id: 'qweqweqweq',
@@ -59,6 +60,8 @@ export default (state = initialState, {type, ...action}) => {
       return {...state, isConnected: action.payload};
     case 'SET_MESSAGES_QUEUE':
       return {...state, messagesQueue: action.payload};
+    case 'SET_IS_LOGGED':
+      return {...state, isLogged: action.payload};
     case 'SET_USER':
       // console.log('SET_USER', action.payload);
       return {...state, user: action.payload};

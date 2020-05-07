@@ -10,6 +10,8 @@ const ChatsScreen = ({navigation}) => {
   const [chats, setChats] = useState([]);
   const {content, bgCard, text} = useSelector(state => state.colors);
 
+  const {user} = useSelector(state => state.main);
+
   useEffect(() => {
     let newChats = [];
 
@@ -20,6 +22,10 @@ const ChatsScreen = ({navigation}) => {
     }
 
     setChats(newChats);
+
+    if (user === undefined || user.accessToken === null) {
+      navigation.navigate('SignIn');
+    }
   }, []);
   return (
     <Container>

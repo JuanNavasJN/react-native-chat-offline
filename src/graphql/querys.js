@@ -20,3 +20,14 @@ export const LOGIN = gql`
     }
   }
 `;
+
+export const USER_UPDATE = gql`
+  mutation UpdateUser($accessToken: String!, $data: UserUpdateInput!) {
+    userUpdate(accessToken: $accessToken, data: $data) {
+      _id
+      username
+      name
+      avatar
+    }
+  }
+`;

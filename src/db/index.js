@@ -44,6 +44,7 @@ const createUser = user =>
           _id: user._id,
           name: user.name,
           username: user.username,
+          accessToken: user.accessToken,
         });
         resolve(newUser);
       } catch (e) {

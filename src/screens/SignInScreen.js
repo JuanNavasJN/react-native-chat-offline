@@ -16,7 +16,7 @@ import {vh, vw} from 'react-native-css-vh-vw';
 import {LOGIN} from '../graphql/querys';
 import {useMutation} from '@apollo/react-hooks';
 import {useDispatch, useSelector} from 'react-redux';
-import {updateUserById} from '../db/index';
+import {createUser} from '../db/index';
 
 const SignInScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -24,10 +24,15 @@ const SignInScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const {user} = useSelector(state => state.main);
+  const {isConnected} = useSelector(state => state.main);
 
   const setUser = useCallback(
     data => dispatch({type: 'SET_USER', payload: data}),
+    [dispatch],
+  );
+
+  const setIsLogged = useCallback(
+    data => dispatch({type: 'SET_IS_LOGGED', payload: data}),
     [dispatch],
   );
 
@@ -37,17 +42,23 @@ const SignInScreen = ({navigation}) => {
 
   const [login, {error}] = useMutation(LOGIN);
 
-  useEffect(
-    _ => {
-      if (user && typeof user.accessToken === 'string') {
-        navigation.navigate('Chats');
-      }
-    },
-    [user],
-  );
+  // useEffect(
+  //   _ => {
+  //     if (user && typeof user.accessToken === 'string') {
+  //       navigation.navigate('Chats');
+  //       setIsLogged(true);
+  //     }
+  //   },
+  //   [user],
+  // );
 
   const handleSubmit = async _ => {
     // --------------------------------- Validations --------------------------------------
+    if (isConnected === false) {
+      Alert.alert('', 'Sorry 😕 there is no internet conection.');
+      return;
+    }
+
     if (username === '' || password === '') {
       Alert.alert('', 'Please complete all fields.');
       return;
@@ -66,7 +77,7 @@ const SignInScreen = ({navigation}) => {
     // --------------------------------- End - Validations --------------------------------------
 
     let data = {
-      username,
+      username: username.toLowerCase(),
       password,
     };
 
@@ -79,14 +90,16 @@ const SignInScreen = ({navigation}) => {
 
       if (res.data && res.data.login.accessToken) {
         let data = res.data.login;
-        await updateUserById(data._id, {
+
+        let newUser = await createUser({
+          _id: data._id,
           name: data.name,
           username: data.username,
           accessToken: data.accessToken,
         });
-
-        setUser(data); // set user to redux
-        // console.log(data);
+        // console.log('DB: ', newUser);
+        setUser(newUser); // set user to redux
+        setIsLogged(true);
         navigation.navigate('Chats');
       } else {
         Alert.alert('', 'Error to login 😕');
@@ -127,7 +140,8 @@ const SignInScreen = ({navigation}) => {
                       placeholder="Username"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
-                      onChangeText={e => setUsername(e.toLowerCase())}
+                      value={username}
+                      onChangeText={e => setUsername(e)}
                     />
                   </Item>
                 </View>
@@ -138,6 +152,7 @@ const SignInScreen = ({navigation}) => {
                       placeholder="Password"
                       style={{color: text}}
                       secureTextEntry={true}
+                      value={password}
                       onChangeText={e => setPassword(e)}
                     />
                   </Item>
@@ -146,13 +161,13 @@ const SignInScreen = ({navigation}) => {
                 <View style={[styles.row, {marginTop: 20}]}>
                   <Button
                     style={[styles.button, {backgroundColor: bgBotton}]}
-                    onPress={handleSubmit}>
-                    <Text>Login</Text>
+                    onPress={_ => navigation.navigate('SignUp')}>
+                    <Text>Sign Up</Text>
                   </Button>
                   <Button
                     style={[styles.button, {backgroundColor: bgBotton}]}
-                    onPress={_ => navigation.navigate('SignUp')}>
-                    <Text>Sign Up</Text>
+                    onPress={handleSubmit}>
+                    <Text>Login</Text>
                   </Button>
                 </View>
               </KeyboardAvoidingView>

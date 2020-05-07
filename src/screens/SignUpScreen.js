@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, StyleSheet, KeyboardAvoidingView, Alert} from 'react-native';
 import {
   Container,
@@ -13,21 +13,32 @@ import {
 } from 'native-base';
 import Header from '../components/Header';
 import {vh, vw} from 'react-native-css-vh-vw';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {useMutation} from '@apollo/react-hooks';
 import {USER_CREATE} from '../graphql/querys';
-import {createUser as userCreateDB} from '../db/index';
 
 const SignUpScreen = ({navigation}) => {
+  const dispatch = useDispatch();
+
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
 
-  const {user} = useSelector(state => state.main);
+  const {user, isConnected} = useSelector(state => state.main);
 
   const {content, bgCard, text, placeholder, bgBotton} = useSelector(
     state => state.colors,
+  );
+
+  const setIsLogged = useCallback(
+    data => dispatch({type: 'SET_IS_LOGGED', payload: data}),
+    [dispatch],
+  );
+
+  const setUser = useCallback(
+    data => dispatch({type: 'SET_USER', payload: data}),
+    [dispatch],
   );
 
   const [userCreate] = useMutation(USER_CREATE);
@@ -36,6 +47,7 @@ const SignUpScreen = ({navigation}) => {
     _ => {
       if (user && typeof user.accessToken === 'string') {
         navigation.navigate('Chats');
+        setIsLogged(true);
       }
     },
     [user],
@@ -43,6 +55,12 @@ const SignUpScreen = ({navigation}) => {
 
   const handleSubmit = async _ => {
     // --------------------------------- Validations --------------------------------------
+
+    if (isConnected === false) {
+      Alert.alert('', 'Sorry 😕 there is no internet conection.');
+      return;
+    }
+
     if (
       name === '' ||
       username === '' ||
@@ -70,28 +88,20 @@ const SignUpScreen = ({navigation}) => {
 
     // --------------------------------- End - Validations --------------------------------------
 
+    setUser(undefined);
+
     let data = {
       name,
-      username,
+      username: username.toLowerCase(),
       password,
     };
 
     try {
-      let res = await userCreate({
+      await userCreate({
         variables: {data},
       });
 
-      let userId = res.data.userCreate._id;
-
       // --- All good then --------
-
-      let newUser = await userCreateDB({
-        _id: userId,
-        name,
-        username,
-      });
-
-      console.log('user saved on DB -> ', newUser);
 
       Alert.alert('', 'User created! 😀');
       navigation.navigate('SignIn');
@@ -122,7 +132,7 @@ const SignUpScreen = ({navigation}) => {
                       placeholder="Name"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
-                      // value={name}
+                      value={name}
                       onChangeText={e => setName(e)}
                     />
                   </Item>
@@ -133,8 +143,8 @@ const SignUpScreen = ({navigation}) => {
                       placeholder="Username"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
-                      // value={username}
-                      onChangeText={e => setUsername(e.toLowerCase())}
+                      value={username}
+                      onChangeText={e => setUsername(e)}
                     />
                   </Item>
                 </View>
@@ -144,7 +154,7 @@ const SignUpScreen = ({navigation}) => {
                       placeholder="Password"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
-                      // value={password}
+                      value={password}
                       onChangeText={e => setPassword(e)}
                       secureTextEntry={true}
                     />
@@ -156,7 +166,7 @@ const SignUpScreen = ({navigation}) => {
                       placeholder="Confirm Password"
                       placeholderTextColor={placeholder}
                       style={{color: text}}
-                      // value={confirmation}
+                      value={confirmation}
                       onChangeText={e => setConfirmation(e)}
                       secureTextEntry={true}
                     />
