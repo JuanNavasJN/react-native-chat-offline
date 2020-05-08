@@ -12,12 +12,14 @@ import {
   Icon,
 } from 'native-base';
 import Header from '../components/Header';
-import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Alert, Image} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 import {useSelector, useDispatch} from 'react-redux';
 import {useMutation} from '@apollo/react-hooks';
 import {USER_UPDATE} from '../graphql/querys';
 import {updateUserById} from '../db/index';
+import ImagePicker from 'react-native-image-picker';
+const short = require('short-uuid');
 
 const ProfileScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -26,6 +28,7 @@ const ProfileScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(undefined);
   const [confirmation, setConfirmation] = useState(undefined);
+  const [avatarSource, setAvatarSource] = useState({});
 
   const [userUpdate] = useMutation(USER_UPDATE);
 
@@ -126,13 +129,56 @@ const ProfileScreen = ({navigation}) => {
     }
   };
 
+  const handleAvatar = _ => {
+    console.log('handle avatar...');
+
+    // More info on all the options is below in the API Reference... just some common use cases shown here
+    const options = {
+      title: 'Select Avatar',
+      // customButtons: [{name: 'fb', title: 'Choose Photo from Facebook'}],
+      // storageOptions: {
+      //   skipBackup: true,
+      //   path: 'images',
+      // },
+    };
+
+    /**
+     * The first arg is the options object for customization (it can also be null or omitted for default options),
+     * The second arg is the callback which sends object: response (more info in the API Reference)
+     */
+    ImagePicker.showImagePicker(options, response => {
+      // console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const type = response.type;
+
+        const name = short.generate() + '.' + type.split('/')[1];
+
+        const source = {uri: response.uri, name, type};
+        // response.fileName
+        // response.type
+
+        console.log(source);
+        setAvatarSource(source);
+
+        //----------------------------------
+      }
+    });
+  };
+
   return (
     <Container>
       <Header title="Profile" navigation={navigation} />
       <View style={[styles.content, {backgroundColor: content}]}>
         <View style={[styles.row2]}>
-          <TouchableOpacity style={styles.avatar}>
-            {/* <View//> */}
+          <TouchableOpacity style={styles.avatar} onPress={handleAvatar}>
+            <Image source={avatarSource} style={styles.avatarImg} />
             <Icon
               type="MaterialIcons"
               name="camera-alt"
@@ -239,6 +285,11 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     elevation: 4,
     alignItems: 'flex-end',
+  },
+  avatarImg: {
+    width: vw(30),
+    height: vw(30),
+    borderRadius: 100,
   },
   icon: {
     position: 'absolute',
