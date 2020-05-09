@@ -9,6 +9,7 @@ const UserSchema = {
     name: 'string',
     username: {type: 'string', indexed: true},
     accessToken: {type: 'string', optional: true},
+    avatar: {type: 'string', optional: true},
   },
 };
 
@@ -45,6 +46,7 @@ const createUser = user =>
           name: user.name,
           username: user.username,
           accessToken: user.accessToken,
+          avatar: user.avatar,
         });
         resolve(newUser);
       } catch (e) {

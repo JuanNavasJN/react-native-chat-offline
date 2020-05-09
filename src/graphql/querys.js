@@ -17,6 +17,7 @@ export const LOGIN = gql`
       name
       username
       accessToken
+      avatar
     }
   }
 `;
@@ -28,6 +29,16 @@ export const USER_UPDATE = gql`
       username
       name
       avatar
+    }
+  }
+`;
+
+export const UPLOAD_FILE = gql`
+  mutation uploadFile($file: Upload!) {
+    uploadFile(file: $file) {
+      uri
+      # mimetype
+      # encoding
     }
   }
 `;

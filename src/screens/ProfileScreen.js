@@ -16,7 +16,7 @@ import {View, StyleSheet, TouchableOpacity, Alert, Image} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 import {useSelector, useDispatch} from 'react-redux';
 import {useMutation} from '@apollo/react-hooks';
-import {USER_UPDATE} from '../graphql/querys';
+import {USER_UPDATE, UPLOAD_FILE} from '../graphql/querys';
 import {updateUserById} from '../db/index';
 import ImagePicker from 'react-native-image-picker';
 const short = require('short-uuid');
@@ -29,8 +29,10 @@ const ProfileScreen = ({navigation}) => {
   const [password, setPassword] = useState(undefined);
   const [confirmation, setConfirmation] = useState(undefined);
   const [avatarSource, setAvatarSource] = useState({});
+  const [avatar, setAvatar] = useState('');
 
   const [userUpdate] = useMutation(USER_UPDATE);
+  const [uploadFile] = useMutation(UPLOAD_FILE);
 
   const {content, bgCard, text, placeholder, bgBotton} = useSelector(
     state => state.colors,
@@ -48,10 +50,12 @@ const ProfileScreen = ({navigation}) => {
       if (typeof user === 'object') {
         setName(user.name);
         setUsername(user.username);
-      }
+        setAvatar(user.avatar);
 
-      // if (user === undefined) navigation.navigate('SignIn');
-      // console.log('user -> ', user);
+        if (user.avatar && user.avatar !== '') {
+          setAvatarSource({uri: user.avatar});
+        }
+      }
     },
     [user],
   );
@@ -92,10 +96,8 @@ const ProfileScreen = ({navigation}) => {
       name,
       username: username.toLowerCase(),
       password,
-      avatar: 'avatar',
+      avatar,
     };
-
-    // console.log(accessToken, data);
 
     try {
       let res = await userUpdate({
@@ -109,6 +111,7 @@ const ProfileScreen = ({navigation}) => {
       await updateUserById(userUpd._id, {
         username: userUpd.username,
         name: userUpd.name,
+        avatar: userUpd.avatar,
       });
 
       Alert.alert('', 'Updated profile 😀');
@@ -130,7 +133,7 @@ const ProfileScreen = ({navigation}) => {
   };
 
   const handleAvatar = _ => {
-    console.log('handle avatar...');
+    // console.log('handle avatar...');
 
     // More info on all the options is below in the API Reference... just some common use cases shown here
     const options = {
@@ -146,9 +149,7 @@ const ProfileScreen = ({navigation}) => {
      * The first arg is the options object for customization (it can also be null or omitted for default options),
      * The second arg is the callback which sends object: response (more info in the API Reference)
      */
-    ImagePicker.showImagePicker(options, response => {
-      // console.log('Response = ', response);
-
+    ImagePicker.showImagePicker(options, async response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -156,18 +157,34 @@ const ProfileScreen = ({navigation}) => {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        const type = response.type;
+        const {type} = response;
 
         const name = short.generate() + '.' + type.split('/')[1];
 
-        const source = {uri: response.uri, name, type};
-        // response.fileName
-        // response.type
-
-        console.log(source);
-        setAvatarSource(source);
-
         //----------------------------------
+
+        const file = {
+          filename: name,
+          mimetype: response.type,
+          encoding: response.data,
+        };
+
+        try {
+          Alert.alert('', 'Uploading avatar, please wait...');
+
+          const res = await uploadFile({
+            variables: {file},
+          });
+
+          const {uri} = res.data.uploadFile;
+
+          setAvatarSource({uri});
+          setAvatar(uri);
+        } catch (e) {
+          Alert.alert('', 'Error to upload avatar 😕');
+          console.log('error to upload avatar ->');
+          console.log(e);
+        }
       }
     });
   };

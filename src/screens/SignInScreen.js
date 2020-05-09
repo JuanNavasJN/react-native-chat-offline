@@ -96,8 +96,9 @@ const SignInScreen = ({navigation}) => {
           name: data.name,
           username: data.username,
           accessToken: data.accessToken,
+          avatar: data.avatar || '',
         });
-        // console.log('DB: ', newUser);
+
         setUser(newUser); // set user to redux
         setIsLogged(true);
         navigation.navigate('Chats');
