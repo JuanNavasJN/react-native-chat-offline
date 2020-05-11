@@ -12,3 +12,4 @@
 - Detect user typing
 - Detect user online
 - Counter for messages pending to read
+- Notifications
