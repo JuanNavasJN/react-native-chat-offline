@@ -17,6 +17,7 @@ import {ApolloProvider} from '@apollo/react-hooks';
 const cache = new InMemoryCache();
 
 const API_ENDPOINT_URI = 'http://192.168.1.101:8080';
+// const API_ENDPOINT_URI = 'https://chatjnback-bright-mandrill-qt.mybluemix.net';
 
 const link = new HttpLink({
   uri: API_ENDPOINT_URI,

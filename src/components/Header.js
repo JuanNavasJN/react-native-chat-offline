@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {View, StyleSheet, TouchableOpacity, StatusBar} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {
   Header,
   Title,
@@ -12,9 +12,14 @@ import {
 } from 'native-base';
 import {vh, vw} from 'react-native-css-vh-vw';
 import {useSelector, useDispatch} from 'react-redux';
-import {deleteAllMessages, updateUserById, deleteUser} from '../db/index';
+import {
+  deleteAllMessages,
+  updateUserById,
+  deleteUser,
+  updateSetting,
+} from '../db/index';
 
-const Index = ({title, navigation}) => {
+const Index = ({title, navigation, avatar}) => {
   const [showMenu, setShowMenu] = useState(false);
   const {content, mode, bgBotton, text} = useSelector(state => state.colors);
   const {user, isLogged} = useSelector(state => state.main);
@@ -113,6 +118,20 @@ const Index = ({title, navigation}) => {
   const handleMode = mode => {
     setShowMenu(false);
     setMode(mode);
+
+    switch (mode) {
+      case 'dark':
+        updateSetting('darkMode', true);
+
+        break;
+      case 'light':
+        updateSetting('darkMode', false);
+
+        break;
+
+      default:
+        break;
+    }
   };
 
   const handleLogout = async _ => {
@@ -136,16 +155,28 @@ const Index = ({title, navigation}) => {
             <Icon name="menu" />
           </Button>
         </Left>
-        <Body>
-          <Title>{title}</Title>
+        <Body style={styles.body}>
+          {avatar && (
+            <View style={styles.avatar}>
+              <Image source={{uri: avatar}} style={styles.avatar} />
+            </View>
+          )}
+
+          <View style={styles.textContainer}>
+            <View style={styles.titleContainer}>
+              <Title>{title}</Title>
+              {/* <View style={styles.online} /> */}
+            </View>
+            {/* <Text style={styles.typing}>Typing...</Text> */}
+          </View>
         </Body>
-        <Right>
+        {/* <Right>
           {title === 'Chat' && (
             <Button danger onPress={handlePress}>
               <Text>Delete All</Text>
             </Button>
           )}
-        </Right>
+        </Right> */}
       </Header>
       {showMenu && (
         <View style={[styles.menuContainer, {backgroundColor: content}]}>
@@ -186,6 +217,14 @@ const styles = StyleSheet.create({
   header: {
     height: vh(8),
   },
+  body: {
+    flexDirection: 'row',
+    // backgroundColor: '#f5f5f5',
+    minWidth: vw(30),
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: vw(15),
+  },
   menuContainer: {
     position: 'absolute',
     // backgroundColor: '#f5f5f5',
@@ -206,6 +245,32 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#757575',
+  },
+  avatar: {
+    backgroundColor: '#ccc',
+    width: vw(10),
+    height: vw(10),
+    borderRadius: 100,
+    marginRight: vw(6),
+  },
+  typing: {
+    fontSize: 8,
+    color: '#cfcfcf',
+  },
+  textContainer: {
+    alignItems: 'center',
+  },
+  online: {
+    width: vw(3),
+    height: vw(3),
+    backgroundColor: '#57B640',
+    borderRadius: 100,
+    marginLeft: vw(2),
+    marginTop: vh(0.6),
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

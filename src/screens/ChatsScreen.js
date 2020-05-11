@@ -1,32 +1,76 @@
 import React, {useState, useEffect} from 'react';
 import {Container, Card, CardItem, Text} from 'native-base';
-import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from 'react-native';
 import {vh, vw} from 'react-native-css-vh-vw';
 import {useSelector} from 'react-redux';
+import {GET_CHATS} from '../graphql/querys';
+import {useLazyQuery} from '@apollo/react-hooks';
 
 import Header from '../components/Header';
 
 const ChatsScreen = ({navigation}) => {
   const [chats, setChats] = useState([]);
   const {content, bgCard, text} = useSelector(state => state.colors);
-
+  const [token, setToken] = useState('');
   const {user} = useSelector(state => state.main);
 
+  const [getChats, {called, loading, data: response}] = useLazyQuery(
+    GET_CHATS,
+    {
+      variables: {token},
+    },
+  );
+
   useEffect(() => {
-    let newChats = [];
-
-    for (let i = 0; i < 15; i++) {
-      newChats.push({
-        name: 'ss',
-      });
-    }
-
-    setChats(newChats);
-
-    if (user === undefined || user.accessToken === null) {
-      navigation.navigate('SignIn');
-    }
+    // let newChats = [];
+    // for (let i = 0; i < 15; i++) {
+    //   newChats.push({
+    //     name: 'ss',
+    //   });
+    // }
+    // setChats(newChats);
   }, []);
+
+  useEffect(
+    _ => {
+      if (token !== '') {
+        getChats();
+      }
+    },
+    [token],
+  );
+
+  useEffect(
+    _ => {
+      if (response !== undefined) {
+        const data = response.getChats.data;
+        // console.log(data[0]);
+        setChats(
+          data.map(e => ({
+            name: e.name,
+            avatar: e.avatar,
+          })),
+        );
+      }
+    },
+    [response],
+  );
+
+  useEffect(
+    _ => {
+      if (user && typeof user.accessToken === 'string') {
+        setToken(user.accessToken);
+      }
+    },
+    [user],
+  );
+
   return (
     <Container>
       <Header title="Chats" navigation={navigation} />
@@ -38,22 +82,24 @@ const ChatsScreen = ({navigation}) => {
           renderItem={({item}) => (
             <TouchableOpacity
               activeOpacity={0.4}
-              onPress={_ => navigation.navigate('Chat')}>
+              onPress={_ => navigation.navigate('Chat', {chat: item})}>
               <Card>
                 <CardItem style={[{backgroundColor: bgCard}]}>
-                  <View style={styles.avatar} />
+                  <View style={styles.avatar}>
+                    <Image source={{uri: item.avatar}} style={styles.avatar} />
+                  </View>
                   <View>
                     <View style={styles.line}>
-                      <Text style={[{color: text}]}>John Doe</Text>
-                      <View style={styles.status} />
+                      <Text style={[{color: text}]}>{item.name}</Text>
+                      {/* <View style={styles.status} /> */}
                     </View>
-                    <View>
+                    {/* <View>
                       <Text style={styles.typing}>Typing...</Text>
-                    </View>
+                    </View> */}
                   </View>
-                  <View style={styles.counter}>
+                  {/* <View style={styles.counter}>
                     <Text style={styles.counterText}>17</Text>
-                  </View>
+                  </View> */}
                 </CardItem>
               </Card>
             </TouchableOpacity>

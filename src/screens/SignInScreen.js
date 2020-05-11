@@ -24,7 +24,7 @@ const SignInScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const {isConnected} = useSelector(state => state.main);
+  const {isConnected, user} = useSelector(state => state.main);
 
   const setUser = useCallback(
     data => dispatch({type: 'SET_USER', payload: data}),
@@ -42,15 +42,19 @@ const SignInScreen = ({navigation}) => {
 
   const [login, {error}] = useMutation(LOGIN);
 
-  // useEffect(
-  //   _ => {
-  //     if (user && typeof user.accessToken === 'string') {
-  //       navigation.navigate('Chats');
-  //       setIsLogged(true);
-  //     }
-  //   },
-  //   [user],
-  // );
+  useEffect(
+    _ => {
+      if (
+        user &&
+        navigation.isFocused() &&
+        typeof user.accessToken === 'string'
+      ) {
+        navigation.navigate('Chats');
+        setIsLogged(true);
+      }
+    },
+    [user],
+  );
 
   const handleSubmit = async _ => {
     // --------------------------------- Validations --------------------------------------

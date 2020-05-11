@@ -27,7 +27,49 @@ const MessageSchema = {
   },
 };
 
-const realm = new Realm({schema: [UserSchema, MessageSchema]});
+const SettingSchema = {
+  name: 'Setting',
+  properties: {
+    darkMode: {type: 'bool', optional: true},
+  },
+};
+
+const realm = new Realm({schema: [UserSchema, MessageSchema, SettingSchema]});
+
+const getSetting = _ => realm.objects('Setting')[0];
+
+// const getSetting = _ =>
+//   new Promise((resolve, reject) => {
+//     realm.write(async () => {
+//       let setting = realm.objects('Setting');
+//       await realm.delete(setting);
+//       // setting = await realm.objects('Setting');
+//       resolve(null);
+//     });
+//   });
+
+const updateSetting = (key, value) =>
+  new Promise((resolve, reject) => {
+    realm.write(async () => {
+      try {
+        let setting = realm.objects('Setting');
+        let newSetting;
+        if (setting.length === 0) {
+          newSetting = realm.create('Setting', {
+            [key]: value,
+          });
+        } else {
+          newSetting = setting[0];
+          newSetting[key] = value;
+        }
+        // console.log('setting', newSetting);
+        resolve(newSetting);
+      } catch (e) {
+        console.log('error to updateSetting', e);
+        reject(e);
+      }
+    });
+  });
 
 const createUser = user =>
   new Promise((resolve, reject) => {
@@ -176,4 +218,6 @@ export {
   deleteUser,
   updateUserById,
   updateMessageById,
+  updateSetting,
+  getSetting,
 };

@@ -37,8 +37,28 @@ export const UPLOAD_FILE = gql`
   mutation uploadFile($file: Upload!) {
     uploadFile(file: $file) {
       uri
-      # mimetype
-      # encoding
+    }
+  }
+`;
+
+export const GET_CHATS = gql`
+  query GetChats($token: String!) {
+    getChats(accessToken: $token) {
+      data {
+        _id
+        name
+        avatar
+        messages {
+          _id
+          text
+          chatId
+          userId
+          sent
+          pending
+          receive
+          createdAt
+        }
+      }
     }
   }
 `;

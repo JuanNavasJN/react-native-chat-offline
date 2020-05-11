@@ -27,7 +27,7 @@ const RootStack = createStackNavigator(
   },
   {
     // initialRouteName: 'Profile',
-    initialRouteName: 'Chats',
+    initialRouteName: 'SignIn',
     headerMode: 'none',
     defaultNavigationOptions: {
       ...TransitionPresets.SlideFromRightIOS,
