@@ -17,6 +17,8 @@ const messageParse = message => {
     sent: message.sent,
     pending: message.pending,
     received: message.received,
+    readed: message.readed,
+    chat: message.chat,
     user,
   };
 };

@@ -11,7 +11,7 @@ const ChatScreen = ({navigation}) => {
         avatar={navigation.state.params.chat.avatar}
         navigation={navigation}
       />
-      <Chat />
+      <Chat id={navigation.state.params.chat._id} />
     </Container>
   );
 };

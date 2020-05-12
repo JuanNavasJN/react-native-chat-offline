@@ -51,14 +51,30 @@ export const GET_CHATS = gql`
         messages {
           _id
           text
-          chatId
-          userId
+          chat
+          user
           sent
           pending
-          receive
+          received
           createdAt
+          readed
         }
       }
+    }
+  }
+`;
+
+export const MESSAGE_CREATE = gql`
+  mutation MessageCreate($token: String!, $data: MessageCreateInput!) {
+    messageCreate(accessToken: $token, data: $data) {
+      _id
+      text
+      user
+      chat
+      sent
+      pending
+      received
+      readed
     }
   }
 `;

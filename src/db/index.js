@@ -21,9 +21,11 @@ const MessageSchema = {
     text: 'string',
     createdAt: 'string',
     user: 'User',
+    chat: 'string',
     received: 'bool',
     sent: 'bool',
     pending: 'bool',
+    readed: 'bool',
   },
 };
 
@@ -152,8 +154,10 @@ const createMessage = message =>
           // _id: short.generate(),
           _id: message._id,
           text: message.text,
+          chat: message.chat,
           createdAt: String(new Date().getTime()),
           received: message.received,
+          readed: message.readed,
           sent: message.sent,
           pending: message.pending,
           user: message.user,
@@ -180,6 +184,8 @@ const updateMessageById = (id, data) =>
 
         if (typeof data.received === 'boolean')
           message.received = data.received;
+
+        if (typeof data.readed === 'boolean') message.readed = data.readed;
 
         resolve(message);
       } catch (e) {

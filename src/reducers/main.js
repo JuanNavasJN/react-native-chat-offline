@@ -37,11 +37,13 @@ const PUSH_MESSAGES = (state, action) => {
       message.sent = true;
       message.received = false;
       message.pending = false;
+      message.readed = false;
       createMessage(message);
     } else {
       message.sent = false;
       message.received = false;
       message.pending = true;
+      message.readed = false;
       // else save to DB and push to messages queue on DB
       createMessage(message);
       console.log('not connected');

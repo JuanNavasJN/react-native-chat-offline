@@ -50,11 +50,11 @@ const ChatsScreen = ({navigation}) => {
     _ => {
       if (response !== undefined) {
         const data = response.getChats.data;
-        // console.log(data[0]);
         setChats(
           data.map(e => ({
             name: e.name,
             avatar: e.avatar,
+            _id: e._id || '',
           })),
         );
       }
