@@ -1,6 +1,6 @@
 # ChatJN
 
-## Version 1.0
+## Version 1.0 (Unfinished)
 
 - Sign In, Sign Up, Log Out
 - Chat one-to-one
